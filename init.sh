@@ -34,3 +34,5 @@ done
 
 find $(dirname "$0") -type f -not -path '*/[@.]*' -exec sed -i -e "s/\\\$MODNAME\\\$/$MODNAME/g" {} \;
 for f in $(dirname "$0")/*; do mv "$f" "$(echo "$f" | sed s/\\\$MODNAME\\\$/$MODNAME/g)"; done
+echo "Initialization Complete."
+rm $0
