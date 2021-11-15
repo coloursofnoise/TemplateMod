@@ -1,8 +1,14 @@
 NAMEPATTERN='[^[:alnum:] _-]'
 
+NAMEARG=$1
 while [ -z $MODNAME ]; do
-    echo Enter Mod Name:
-    read MODNAME
+    if [ -z $NAMEARG ]; then
+        echo Enter Mod Name:
+        read MODNAME
+    else
+        MODNAME=$NAMEARG
+        unset NAMEARG
+    fi
 
     # skip verification
     #break
