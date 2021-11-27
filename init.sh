@@ -1,3 +1,5 @@
+# Only use utilities available in the `git bash` terminal on windows
+
 NAMEPATTERN='[^[:alnum:] _-]'
 
 NAMEARG=$1
@@ -14,9 +16,10 @@ while [ -z $MODNAME ]; do
     #break
 
     if [[ $MODNAME =~ $NAMEPATTERN ]]; then
-        echo "!!! Name contains invalid characters.
-Valid characters include \`a-zA-Z0-9 _-\`"
+        echo "!!! Name contains invalid characters."
+        echo "Valid characters include \`a-zA-Z0-9 _-\`"
         unset MODNAME
+        continue
     fi
 
     echo "Checking for duplicates..."
@@ -35,4 +38,4 @@ done
 find $(dirname "$0") -type f -not -path '*/[@.]*' -exec sed -i -e "s/\\\$MODNAME\\\$/$MODNAME/g" {} \;
 for f in $(dirname "$0")/*; do mv "$f" "$(echo "$f" | sed s/\\\$MODNAME\\\$/$MODNAME/g)"; done
 echo "Initialization Complete."
-rm $0
+rm $(dirname "$0")/init.* # delete init files
