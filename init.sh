@@ -39,3 +39,5 @@ find $(dirname "$0") -type f -not -path '*/[@.]*' -exec sed -i -e "s/\\\$MODNAME
 for f in $(dirname "$0")/*; do mv "$f" "$(echo "$f" | sed s/\\\$MODNAME\\\$/$MODNAME/g)"; done
 echo "Initialization Complete."
 rm $(dirname "$0")/init.* # delete init files
+rm $(dirname "$0")/LICENSE # delete license
+rm $(dirname "$0")/README.md # delete readme
