@@ -1,10 +1,12 @@
 @echo off
+setlocal enabledelayedexpansion
 
 set NAMEARG=%1
 :loop
     if "%NAMEARG%"=="" (
         echo Enter Mod Name:
         set /p MODNAME=""
+        echo !MODNAME!>%~dp0/init.modname
     ) else (
         set MODNAME=%NAMEARG%
         set "NAMEARG="
@@ -15,15 +17,28 @@ set NAMEARG=%1
 
     :: findstr character classes are horribly cursed
     :: https://stackoverflow.com/a/8767815
-    echo %MODNAME%|findstr /r "[^0123-9aAb-Cd-EfFg-Ij-NoOp-St-Uv-YzZ _-]">nul 2>&1
-    if errorlevel 1 ( echo ) else (
+    findstr /r /c:"[^0123-9aAb-Cd-EfFg-Ij-NoOp-St-Uv-YzZ _-]" %~dp0/init.modname >nul 2>&1
+    if errorlevel 1 ( echo. ) else (
         echo !!! Name contains invalid characters.
         echo Valid characters include \`a-zA-Z0-9 _-\`
         set "MODNAME="
         goto loop
     )
 
-    :: can't check for duplicates because no curl :bigsadeline:
+    echo Checking for duplicates...
+    if not exist init.modlist (
+        :: first command for Win7 compat
+        powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = ""Tls, Tls11, Tls12, Ssl3\"";Invoke-WebRequest (Invoke-WebRequest https://everestapi.github.io/modupdater.txt).Content -OutFile init.modlist}"
+    )
+    :: in case powershell fails
+    if exist init.modlist (
+        findstr /b /l /c:"%MODNAME%:" %~dp0/init.modlist >nul 2>&1
+        if errorlevel 1 ( echo. ) else (
+            echo Name already in use^^!
+            goto loop
+        )
+    )
+
 :exitloop
 
 :: this is an absolute mess
